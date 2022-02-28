@@ -18,7 +18,7 @@ func main() {
 		User:   os.Getenv("DBUSER"),
 		Passwd: os.Getenv("DBPASS"),
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
+		Addr:   os.Getenv("DBADDR"),
 		DBName: "recipe_collector",
 	}
 	// Get a db handle
