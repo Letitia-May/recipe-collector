@@ -29,4 +29,4 @@ From the root directory to get a list of recipes:
 ```
 go run .
 ```
-Access `http://localhost:8080/` to see list of all recipes.
+Access `http://localhost:8080/recipes` to see list of all recipes.
