@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/go-sql-driver/mysql"
@@ -48,14 +49,18 @@ func main() {
 	}
 	fmt.Println("Connected")
 
+	http.HandleFunc("/", allRecipesHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func allRecipesHandler(w http.ResponseWriter, r *http.Request) {
 	recipes, err := allRecipes()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("Recipes found: ")
+	fmt.Fprintln(w, "Recipes found: ")
 	for _, r := range recipes {
-		fmt.Println(r)
+		fmt.Fprintln(w, r)
 	}
 }
 
