@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,15 +11,15 @@ import (
 )
 
 type recipe struct {
-	ID          int64
-	Title       string
-	Description *string
-	Time        *string
-	Servings    *string
-	Url         *string
-	Notes       *string
-	Rating      *float32
-	TimesCooked *int64
+	ID          int64    `json:"id"`
+	Title       string   `json:"title"`
+	Description *string  `json:"description"`
+	Time        *string  `json:"time"`
+	Servings    *string  `json:"servings"`
+	Url         *string  `json:"url"`
+	Notes       *string  `json:"notes"`
+	Rating      *float32 `json:"rating"`
+	TimesCooked *int64   `json:"times_cooked"`
 }
 
 type recipesResource struct {
@@ -45,10 +46,14 @@ func (rr recipesResource) allRecipesHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Fprintln(w, "Recipes found: ")
-	for _, r := range recipes {
-		fmt.Fprintln(w, r)
+
+	recipesJson, err := json.Marshal(recipes)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(recipesJson)
 }
 
 // Get recipe data from db
@@ -74,39 +79,4 @@ func allRecipes(db *sql.DB) ([]recipe, error) {
 	}
 
 	return recipes, nil
-}
-
-// Build string with recipe data
-func (r recipe) String() string {
-	s := fmt.Sprintf("%d %s", r.ID, r.Title)
-
-	if r.Description != nil {
-		s = s + fmt.Sprintf(" %s", *r.Description)
-	}
-
-	if r.Time != nil {
-		s = s + fmt.Sprintf(" %s", *r.Time)
-	}
-
-	if r.Servings != nil {
-		s = s + fmt.Sprintf(" %s", *r.Servings)
-	}
-
-	if r.Url != nil {
-		s = s + fmt.Sprintf(" %s", *r.Url)
-	}
-
-	if r.Notes != nil {
-		s = s + fmt.Sprintf(" %s", *r.Notes)
-	}
-
-	if r.Rating != nil {
-		s = s + fmt.Sprintf(" %f", *r.Rating)
-	}
-
-	if r.TimesCooked != nil {
-		s = s + fmt.Sprintf(" %d", *r.TimesCooked)
-	}
-
-	return s
 }
