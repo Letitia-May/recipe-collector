@@ -10,7 +10,7 @@ A simple app to help me keep all the recipes I've cooked and loved in one place,
 
 ### Installing
 
-Run the following command from the root directory to get all the required dependencies:
+Run the following command from the `backend` directory to get all the required dependencies:
 ```
 go get .
 ```
@@ -25,7 +25,7 @@ export DBADDR=<address>
 
 Note: Currently just a command line app.
 
-From the root directory to get a list of recipes:
+From the `backend` directory to get a list of recipes:
 ```
 go run .
 ```

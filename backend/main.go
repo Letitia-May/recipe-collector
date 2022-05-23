@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"recipe-collector/handlers"
+	"recipe-collector/backend/handlers"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-sql-driver/mysql"
