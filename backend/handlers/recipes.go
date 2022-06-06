@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -20,27 +21,30 @@ type recipe struct {
 	Notes       *string  `json:"notes,omitempty"`
 	Rating      *float32 `json:"rating,omitempty"`
 	TimesCooked *int64   `json:"times_cooked,omitempty"`
+	Steps       []step   `json:"steps,omitempty"`
+}
+
+type step struct {
+	// include step data here
 }
 
 type recipesResource struct {
 	db *sql.DB
 }
 
-// Set db connection on recipesResource struct
 func NewRecipesResource(db *sql.DB) recipesResource {
 	return recipesResource{db: db}
 }
 
-// Link handlers to routes
 func (rr recipesResource) Routes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/", rr.allRecipesHandler)
+	r.Get("/{recipeID}", rr.getRecipeHandler)
 
 	return r
 }
 
-// Format recipe data
 func (rr recipesResource) allRecipesHandler(w http.ResponseWriter, r *http.Request) {
 	recipes, err := allRecipes(rr.db)
 	if err != nil {
@@ -57,7 +61,27 @@ func (rr recipesResource) allRecipesHandler(w http.ResponseWriter, r *http.Reque
 	w.Write(recipesJson)
 }
 
-// Get recipe data from db
+func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Request) {
+	recipeID, err := strconv.ParseInt(chi.URLParam(r, "recipeID"), 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	recipe, err := getRecipe(rr.db, recipeID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	recipeJson, err := json.Marshal(recipe)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000")
+	w.Write(recipeJson)
+}
+
 func allRecipes(db *sql.DB) ([]recipe, error) {
 	var recipes []recipe
 
@@ -80,4 +104,18 @@ func allRecipes(db *sql.DB) ([]recipe, error) {
 	}
 
 	return recipes, nil
+}
+
+func getRecipe(db *sql.DB, id int64) (recipe, error) {
+	var recipe recipe
+
+	row := db.QueryRow("SELECT * FROM recipes WHERE id = ?", id)
+	if err := row.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.Rating, &recipe.TimesCooked); err != nil {
+		if err == sql.ErrNoRows {
+			return recipe, fmt.Errorf("getRecipe %d: no such recipe", id)
+		}
+		return recipe, fmt.Errorf("getRecipe %d: %v", id, err)
+	}
+
+	return recipe, nil
 }
