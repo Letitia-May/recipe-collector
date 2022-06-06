@@ -13,13 +13,13 @@ import (
 type recipe struct {
 	ID          int64    `json:"id"`
 	Title       string   `json:"title"`
-	Description *string  `json:"description"`
-	Time        *string  `json:"time"`
-	Servings    *string  `json:"servings"`
-	Url         *string  `json:"url"`
-	Notes       *string  `json:"notes"`
-	Rating      *float32 `json:"rating"`
-	TimesCooked *int64   `json:"times_cooked"`
+	Description *string  `json:"description,omitempty"`
+	Time        *string  `json:"time,omitempty"`
+	Servings    *string  `json:"servings,omitempty"`
+	Url         *string  `json:"url,omitempty"`
+	Notes       *string  `json:"notes,omitempty"`
+	Rating      *float32 `json:"rating,omitempty"`
+	TimesCooked *int64   `json:"times_cooked,omitempty"`
 }
 
 type recipesResource struct {
