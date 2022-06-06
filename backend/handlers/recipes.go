@@ -25,7 +25,8 @@ type recipe struct {
 }
 
 type step struct {
-	// include step data here
+	Number      int64  `json:"number"`
+	Description string `json:"description"`
 }
 
 type recipesResource struct {
@@ -106,16 +107,34 @@ func allRecipes(db *sql.DB) ([]recipe, error) {
 	return recipes, nil
 }
 
-func getRecipe(db *sql.DB, id int64) (recipe, error) {
+func getRecipe(db *sql.DB, id int64) (*recipe, error) {
 	var recipe recipe
 
 	row := db.QueryRow("SELECT * FROM recipes WHERE id = ?", id)
 	if err := row.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.Rating, &recipe.TimesCooked); err != nil {
 		if err == sql.ErrNoRows {
-			return recipe, fmt.Errorf("getRecipe %d: no such recipe", id)
+			return nil, fmt.Errorf("getRecipe %d: no such recipe", id)
 		}
-		return recipe, fmt.Errorf("getRecipe %d: %v", id, err)
+		return nil, fmt.Errorf("getRecipe %d: %v", id, err)
 	}
 
-	return recipe, nil
+	rows, err := db.Query("SELECT number, description FROM steps WHERE recipe_id = ?", id)
+	if err != nil {
+		return nil, fmt.Errorf("getRecipe %d steps: recipe has no steps", id)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var step step
+		if err := rows.Scan(&step.Number, &step.Description); err != nil {
+			return nil, fmt.Errorf("getRecipe %d steps: %v", id, err)
+		}
+		recipe.Steps = append(recipe.Steps, step)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("getRecipe %d steps: %v", id, err)
+	}
+
+	return &recipe, nil
 }
