@@ -53,6 +53,7 @@ func (rr recipesResource) allRecipesHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000")
 	w.Write(recipesJson)
 }
 
