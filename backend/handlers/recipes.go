@@ -12,21 +12,28 @@ import (
 )
 
 type recipe struct {
-	ID          int64    `json:"id"`
-	Title       string   `json:"title"`
-	Description *string  `json:"description,omitempty"`
-	Time        *string  `json:"time,omitempty"`
-	Servings    *string  `json:"servings,omitempty"`
-	Url         *string  `json:"url,omitempty"`
-	Notes       *string  `json:"notes,omitempty"`
-	Rating      *float32 `json:"rating,omitempty"`
-	TimesCooked *int64   `json:"times_cooked,omitempty"`
-	Steps       []step   `json:"steps,omitempty"`
+	ID                 int64               `json:"id"`
+	Title              string              `json:"title"`
+	Description        *string             `json:"description,omitempty"`
+	Time               *string             `json:"time,omitempty"`
+	Servings           *string             `json:"servings,omitempty"`
+	Url                *string             `json:"url,omitempty"`
+	Notes              *string             `json:"notes,omitempty"`
+	Rating             *float32            `json:"rating,omitempty"`
+	TimesCooked        *int64              `json:"times_cooked,omitempty"`
+	Steps              []step              `json:"steps"`
+	IngredientSections []ingredientSection `json:"ingredient_sections"`
 }
 
 type step struct {
 	Number      int64  `json:"number"`
 	Description string `json:"description"`
+}
+
+type ingredientSection struct {
+	ID      int64  `json:"-"`
+	Heading string `json:"heading"`
+	// List   []string `json:"list"`
 }
 
 type recipesResource struct {
@@ -122,8 +129,13 @@ func getRecipe(db *sql.DB, id int64) (*recipe, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	recipe.Steps = steps
 
-	recipe.Steps = append(steps)
+	ingredientSections, err := getRecipeIngredientSections(db, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	recipe.IngredientSections = ingredientSections
 
 	return &recipe, nil
 }
@@ -150,4 +162,28 @@ func getRecipeSteps(db *sql.DB, id int64) ([]step, error) {
 	}
 
 	return steps, nil
+}
+
+func getRecipeIngredientSections(db *sql.DB, id int64) ([]ingredientSection, error) {
+	var ingredientSections []ingredientSection
+
+	rows, err := db.Query("SELECT id, name FROM ingredient_headers WHERE recipe_id = ?", id)
+	if err != nil {
+		return nil, fmt.Errorf("getRecipeIngredientSections %d: recipe has no ingredient headers", id)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var ingredientSection ingredientSection
+		if err := rows.Scan(&ingredientSection.ID, &ingredientSection.Heading); err != nil {
+			return nil, fmt.Errorf("getRecipeIngredientSections %d: %v", id, err)
+		}
+		ingredientSections = append(ingredientSections, ingredientSection)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("getRecipeIngredientSections %d: %v", id, err)
+	}
+
+	return ingredientSections, nil
 }
