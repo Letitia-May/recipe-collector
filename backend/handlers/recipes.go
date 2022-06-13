@@ -118,9 +118,22 @@ func getRecipe(db *sql.DB, id int64) (*recipe, error) {
 		return nil, fmt.Errorf("getRecipe %d: %v", id, err)
 	}
 
+	steps, err := getRecipeSteps(db, id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	recipe.Steps = append(steps)
+
+	return &recipe, nil
+}
+
+func getRecipeSteps(db *sql.DB, id int64) ([]step, error) {
+	var steps []step
+
 	rows, err := db.Query("SELECT number, description FROM steps WHERE recipe_id = ?", id)
 	if err != nil {
-		return nil, fmt.Errorf("getRecipe %d steps: recipe has no steps", id)
+		return nil, fmt.Errorf("getRecipeSteps %d: recipe has no steps", id)
 	}
 
 	defer rows.Close()
@@ -128,13 +141,13 @@ func getRecipe(db *sql.DB, id int64) (*recipe, error) {
 	for rows.Next() {
 		var step step
 		if err := rows.Scan(&step.Number, &step.Description); err != nil {
-			return nil, fmt.Errorf("getRecipe %d steps: %v", id, err)
+			return nil, fmt.Errorf("getRecipeSteps %d: %v", id, err)
 		}
-		recipe.Steps = append(recipe.Steps, step)
+		steps = append(steps, step)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("getRecipe %d steps: %v", id, err)
+		return nil, fmt.Errorf("getRecipeSteps %d: %v", id, err)
 	}
 
-	return &recipe, nil
+	return steps, nil
 }
