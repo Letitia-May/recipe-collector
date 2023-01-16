@@ -33,19 +33,8 @@ go run .
 ```
 Visit `http://localhost:8080/recipes` to see the list of all recipes as a json response.
 
-From the `frontend` directory start the local development server:
-```
-npm run develop
-```
-Gatsby will start a hot-reloading development environment at `http://localhost:8000`.
-
 ## Technology
 ### Backend
 - GoLang
 - MySQL
 - Chi (router for building Go HTTP services)
-### Frontend
-- Typescript
-- React
-- Gatsby (framework for building websites)
-- Styled-components
