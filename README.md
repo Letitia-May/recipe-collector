@@ -33,8 +33,20 @@ go run .
 ```
 Visit `http://localhost:8080/recipes` to see the list of all recipes as a json response.
 
+From the `frontend` directory start the local development server:
+```
+npm run develop
+```
+Next.js will start a hot-reloading development environment at `http://localhost:3000`.
+
 ## Technology
 ### Backend
 - GoLang
 - MySQL
 - Chi (router for building Go HTTP services)
+
+### Frontend
+- Typescript
+- React
+- Next.js (framework for building websites)
+- Styled-components
