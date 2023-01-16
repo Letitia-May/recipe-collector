@@ -37,15 +37,16 @@ From the `frontend` directory start the local development server:
 ```
 npm run develop
 ```
-Gatsby will start a hot-reloading development environment at `http://localhost:8000`.
+Next.js will start a hot-reloading development environment at `http://localhost:3000`.
 
 ## Technology
 ### Backend
 - GoLang
 - MySQL
 - Chi (router for building Go HTTP services)
+
 ### Frontend
 - Typescript
 - React
-- Gatsby (framework for building websites)
+- Next.js (framework for building websites)
 - Styled-components
