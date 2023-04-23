@@ -35,7 +35,7 @@ Visit `http://localhost:8080/recipes` to see the list of all recipes as a json r
 
 From the `frontend` directory start the local development server:
 ```
-npm run develop
+npm run dev
 ```
 Next.js will start a hot-reloading development environment at `http://localhost:3000`.
 
