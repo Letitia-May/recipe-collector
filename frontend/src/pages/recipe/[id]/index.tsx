@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Link from 'next/link';
 import { Fragment } from 'react';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { Recipe as RecipeData } from '@/types/Recipe';
@@ -62,6 +63,8 @@ export default function Recipe({ recipe }: InferGetServerSidePropsType<typeof ge
                 <hr />
                 {notes && <p>Extra notes: {notes}</p>}
                 {url && <a href={url}>Original recipe</a>}
+                <hr />
+                <Link href={`/`}>Back to all recipes</Link>
             </main>
         </>
     );

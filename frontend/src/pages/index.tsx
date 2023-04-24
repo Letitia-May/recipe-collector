@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { RecipeSummary } from '@/types/Recipe';
 
@@ -24,7 +25,7 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
                                 {description && <p>{description}</p>}
                                 {time && <p>Time to prepare: {time}</p>}
                                 {servings && <p>Servings: {servings}</p>}
-                                <a href={`/recipe/${id}`}>See recipe</a>
+                                <Link href={`/recipe/${id}`}>See recipe</Link>
                             </div>
                             <hr />
                         </Fragment>
