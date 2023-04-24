@@ -16,17 +16,7 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
                 <h1>Recipe collector</h1>
 
                 {recipes?.map((recipe) => {
-                    const {
-                        id,
-                        title,
-                        description,
-                        time,
-                        servings,
-                        url,
-                        notes,
-                        rating,
-                        timesCooked,
-                    } = recipe;
+                    const { id, title, description, time, servings, url, notes, rating } = recipe;
                     return (
                         <Fragment key={`recipe-${id}`}>
                             <div>
@@ -36,7 +26,6 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
                                 {servings && <p>Servings: {servings}</p>}
                                 {notes && <p>Extra notes: {notes}</p>}
                                 {rating && <p>{rating}</p>}
-                                {timesCooked && <p>Number of times cooked: {timesCooked}</p>}
                                 {url && <a href={url}>Original recipe</a>}
                             </div>
                             <hr />

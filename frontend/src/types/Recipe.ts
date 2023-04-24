@@ -7,5 +7,17 @@ export interface Recipe {
     url?: string;
     notes?: string;
     rating?: number;
-    timesCooked?: number;
+    times_cooked?: number;
+    ingredient_sections?: IngredientsSection[];
+    steps?: Step[];
+}
+
+interface IngredientsSection {
+    heading: string;
+    ingredients: string[];
+}
+
+interface Step {
+    number: number;
+    description: string;
 }
