@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import Head from 'next/head';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import type { Recipe } from '@/types/Recipe';
+import type { RecipeSummary } from '@/types/Recipe';
 
 export default function Home({ recipes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return (
@@ -37,7 +37,7 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
 }
 
 interface ServerSideProps {
-    recipes: Recipe[];
+    recipes: RecipeSummary[];
 }
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async () => {

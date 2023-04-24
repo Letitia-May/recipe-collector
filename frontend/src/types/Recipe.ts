@@ -1,3 +1,11 @@
+export interface RecipeSummary {
+    id: number;
+    title: string;
+    description?: string;
+    time?: string;
+    servings?: string;
+}
+
 export interface Recipe {
     id: number;
     title: string;
