@@ -1,32 +1,9 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 import Head from 'next/head';
-import styled from 'styled-components';
-import type { Recipe } from '../types/Recipe';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import type { Recipe } from '@/types/Recipe';
 
-const RecipeWrapper = styled.div`
-    padding: 16px;
-`;
-
-export default function Home() {
-    const [recipes, setRecipes] = useState<Recipe[] | []>([]);
-
-    useEffect(() => {
-        fetch('//localhost:8080/recipes', {
-            method: 'GET',
-            headers: { Accept: 'application/json' },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not OK');
-                }
-                return response.json();
-            })
-            .then((data: Recipe[]) => setRecipes(data))
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-    }, []);
-
+export default function Home({ recipes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     return (
         <>
             <Head>
@@ -52,7 +29,7 @@ export default function Home() {
                     } = recipe;
                     return (
                         <Fragment key={`recipe-${id}`}>
-                            <RecipeWrapper>
+                            <div>
                                 <h2>{title}</h2>
                                 {description && <p>{description}</p>}
                                 {time && <p>Time to prepare: {time}</p>}
@@ -61,7 +38,7 @@ export default function Home() {
                                 {rating && <p>{rating}</p>}
                                 {timesCooked && <p>Number of times cooked: {timesCooked}</p>}
                                 {url && <a href={url}>Original recipe</a>}
-                            </RecipeWrapper>
+                            </div>
                             <hr />
                         </Fragment>
                     );
@@ -70,3 +47,32 @@ export default function Home() {
         </>
     );
 }
+
+interface ServerSideProps {
+    recipes: Recipe[];
+}
+
+export const getServerSideProps: GetServerSideProps<ServerSideProps> = async () => {
+    const response = await fetch(`http://localhost:8080/recipes`, {
+        method: 'GET',
+        headers: { Accept: 'application/json' },
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not OK');
+    }
+
+    if (!response.json) {
+        return {
+            notFound: true,
+        };
+    }
+
+    const recipes = await response.json();
+
+    return {
+        props: {
+            recipes,
+        },
+    };
+};
