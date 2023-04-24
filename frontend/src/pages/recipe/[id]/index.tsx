@@ -11,7 +11,6 @@ export default function Recipe({ recipe }: InferGetServerSidePropsType<typeof ge
         servings,
         url,
         notes,
-        rating,
         times_cooked,
         ingredient_sections,
         steps,
@@ -30,7 +29,6 @@ export default function Recipe({ recipe }: InferGetServerSidePropsType<typeof ge
                 {description && <p>{description}</p>}
                 {time && <p>Time to prepare: {time}</p>}
                 {servings && <p>Servings: {servings}</p>}
-                {rating && <p>Rating: {rating}</p>}
                 {times_cooked && <p>Number of times cooked: {times_cooked}</p>}
 
                 {ingredient_sections && (

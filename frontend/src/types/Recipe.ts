@@ -6,7 +6,6 @@ export interface Recipe {
     servings?: string;
     url?: string;
     notes?: string;
-    rating?: number;
     times_cooked?: number;
     ingredient_sections?: IngredientsSection[];
     steps?: Step[];
