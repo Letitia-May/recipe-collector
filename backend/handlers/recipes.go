@@ -27,7 +27,6 @@ type recipe struct {
 	Servings           *string             `json:"servings,omitempty"`
 	Url                *string             `json:"url,omitempty"`
 	Notes              *string             `json:"notes,omitempty"`
-	Rating             *float32            `json:"rating,omitempty"`
 	TimesCooked        *int64              `json:"times_cooked,omitempty"`
 	Steps              []step              `json:"steps"`
 	IngredientSections []ingredientSection `json:"ingredient_sections"`
@@ -126,7 +125,7 @@ func getRecipe(db *sql.DB, id int64) (*recipe, error) {
 	var recipe recipe
 
 	row := db.QueryRow("SELECT * FROM recipes WHERE id = ?", id)
-	if err := row.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.Rating, &recipe.TimesCooked); err != nil {
+	if err := row.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.TimesCooked); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("getRecipe %d: no such recipe", id)
 		}
