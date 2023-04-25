@@ -11,6 +11,14 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+type recipeSummary struct {
+	ID          int64   `json:"id"`
+	Title       string  `json:"title"`
+	Description *string `json:"description,omitempty"`
+	Time        *string `json:"time,omitempty"`
+	Servings    *string `json:"servings,omitempty"`
+}
+
 type recipe struct {
 	ID                 int64               `json:"id"`
 	Title              string              `json:"title"`
@@ -90,10 +98,10 @@ func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Reques
 	w.Write(recipeJson)
 }
 
-func allRecipes(db *sql.DB) ([]recipe, error) {
-	var recipes []recipe
+func allRecipes(db *sql.DB) ([]recipeSummary, error) {
+	var recipes []recipeSummary
 
-	rows, err := db.Query("SELECT * FROM recipes")
+	rows, err := db.Query("SELECT id, title, description, time, servings FROM recipes")
 	if err != nil {
 		return nil, fmt.Errorf("allRecipes: %v", err)
 	}
@@ -101,8 +109,8 @@ func allRecipes(db *sql.DB) ([]recipe, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var recipe recipe
-		if err := rows.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.Rating, &recipe.TimesCooked); err != nil {
+		var recipe recipeSummary
+		if err := rows.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings); err != nil {
 			return nil, fmt.Errorf("allRecipes: %v", err)
 		}
 		recipes = append(recipes, recipe)
