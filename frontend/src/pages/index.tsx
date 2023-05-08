@@ -1,8 +1,8 @@
 import { Fragment, useState } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import type { RecipeSummary } from '@/types/Recipe';
+import type { RecipeSummary as RecipeSummaryType } from '@/types/Recipe';
+import { RecipeSummary } from 'components/RecipeSummary/RecipeSummary';
 
 export default function Home({ recipes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,16 +32,9 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
                 </button>
 
                 {recipes?.map((recipe) => {
-                    const { id, title, description, time, servings } = recipe;
                     return (
-                        <Fragment key={`recipe-${id}`}>
-                            <div>
-                                <h2>{title}</h2>
-                                {description && <p>{description}</p>}
-                                {time && <p>Time to prepare: {time}</p>}
-                                {servings && <p>Servings: {servings}</p>}
-                                <Link href={`/recipe/${id}`}>See recipe</Link>
-                            </div>
+                        <Fragment key={`recipe-${recipe.id}`}>
+                            <RecipeSummary recipe={recipe} />
                             <hr />
                         </Fragment>
                     );
@@ -52,7 +45,7 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
 }
 
 interface ServerSideProps {
-    recipes: RecipeSummary[];
+    recipes: RecipeSummaryType[];
 }
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async () => {
