@@ -1,10 +1,12 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { RecipeSummary } from '@/types/Recipe';
 
 export default function Home({ recipes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+    const [searchTerm, setSearchTerm] = useState('');
+
     return (
         <>
             <Head>
@@ -15,6 +17,19 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
             </Head>
             <main>
                 <h1>Recipe collector</h1>
+
+                <label>
+                    Search recipe titles:
+                    <input
+                        type="text"
+                        placeholder="Type here..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </label>
+                <button type="submit" onClick={() => console.log(searchTerm)}>
+                    Search
+                </button>
 
                 {recipes?.map((recipe) => {
                     const { id, title, description, time, servings } = recipe;
