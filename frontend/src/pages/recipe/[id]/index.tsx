@@ -12,8 +12,8 @@ export default function Recipe({ recipe }: InferGetServerSidePropsType<typeof ge
         servings,
         url,
         notes,
-        times_cooked,
-        ingredient_sections,
+        timesCooked,
+        ingredientSections,
         steps,
     } = recipe;
 
@@ -30,12 +30,12 @@ export default function Recipe({ recipe }: InferGetServerSidePropsType<typeof ge
                 {description && <p>{description}</p>}
                 {time && <p>Time to prepare: {time}</p>}
                 {servings && <p>Servings: {servings}</p>}
-                {times_cooked && <p>Number of times cooked: {times_cooked}</p>}
+                {timesCooked && <p>Number of times cooked: {timesCooked}</p>}
 
-                {ingredient_sections && (
+                {ingredientSections && (
                     <>
                         <h2>Ingredients</h2>
-                        {ingredient_sections.map((section, index) => (
+                        {ingredientSections.map((section, index) => (
                             <Fragment key={`ingredient-section-${index}`}>
                                 {section.heading !== 'Ingredients' && <h3>{section.heading}</h3>}
                                 <ul>

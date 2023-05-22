@@ -27,9 +27,9 @@ type recipe struct {
 	Servings           *string             `json:"servings,omitempty"`
 	Url                *string             `json:"url,omitempty"`
 	Notes              *string             `json:"notes,omitempty"`
-	TimesCooked        *int64              `json:"times_cooked,omitempty"`
+	TimesCooked        *int64              `json:"timesCooked,omitempty"`
 	Steps              []step              `json:"steps"`
-	IngredientSections []ingredientSection `json:"ingredient_sections"`
+	IngredientSections []ingredientSection `json:"ingredientSections"`
 }
 
 type step struct {

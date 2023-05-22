@@ -14,8 +14,8 @@ export interface Recipe {
     servings?: string;
     url?: string;
     notes?: string;
-    times_cooked?: number;
-    ingredient_sections?: IngredientsSection[];
+    timesCooked?: number;
+    ingredientSections?: IngredientsSection[];
     steps?: Step[];
 }
 
