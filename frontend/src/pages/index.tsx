@@ -6,6 +6,24 @@ import { RecipeSummary } from 'components/RecipeSummary/RecipeSummary';
 
 export default function Home({ recipes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
     const [searchTerm, setSearchTerm] = useState('');
+    const [filteredRecipes, setFilteredRecipes] = useState<RecipeSummaryType[] | null>(recipes);
+
+    const searchRecipes = async () => {
+        fetch(`//localhost:8080/recipes/search?query=${searchTerm}`, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.json();
+            })
+            .then((data: RecipeSummaryType[]) => setFilteredRecipes(data))
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
 
     return (
         <>
@@ -27,11 +45,13 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </label>
-                <button type="submit" onClick={() => console.log(searchTerm)}>
+                <button type="submit" onClick={() => searchRecipes()}>
                     Search
                 </button>
 
-                {recipes?.map((recipe) => {
+                {!filteredRecipes && <p>No recipes found</p>}
+
+                {filteredRecipes?.map((recipe) => {
                     return (
                         <Fragment key={`recipe-${recipe.id}`}>
                             <RecipeSummary recipe={recipe} />

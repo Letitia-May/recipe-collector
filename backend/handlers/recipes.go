@@ -56,6 +56,7 @@ func (rr recipesResource) Routes() chi.Router {
 
 	r.Get("/", rr.allRecipesHandler)
 	r.Get("/{recipeID}", rr.getRecipeHandler)
+	r.Get("/search", rr.searchRecipesHandler)
 
 	return r
 }
@@ -97,6 +98,22 @@ func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Reques
 	w.Write(recipeJson)
 }
 
+func (rr recipesResource) searchRecipesHandler(w http.ResponseWriter, r *http.Request) {
+	recipes, err := searchRecipes(rr.db, r.URL.Query().Get("query"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	recipesJson, err := json.Marshal(recipes)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Write(recipesJson)
+}
+
 func allRecipes(db *sql.DB) ([]recipeSummary, error) {
 	var recipes []recipeSummary
 
@@ -116,6 +133,30 @@ func allRecipes(db *sql.DB) ([]recipeSummary, error) {
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("allRecipes: %v", err)
+	}
+
+	return recipes, nil
+}
+
+func searchRecipes(db *sql.DB, searchTerm string) ([]recipeSummary, error) {
+	var recipes []recipeSummary
+
+	rows, err := db.Query("SELECT id, title, description, time, servings FROM recipes WHERE recipes.title LIKE ?", "%"+searchTerm+"%")
+	if err != nil {
+		return nil, fmt.Errorf("searchRecipes: %v", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var recipe recipeSummary
+		if err := rows.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings); err != nil {
+			return nil, fmt.Errorf("searchRecipes: %v", err)
+		}
+		recipes = append(recipes, recipe)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("searchRecipes: %v", err)
 	}
 
 	return recipes, nil
