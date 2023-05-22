@@ -54,15 +54,15 @@ func NewRecipesResource(db *sql.DB) recipesResource {
 func (rr recipesResource) Routes() chi.Router {
 	r := chi.NewRouter()
 
-	r.Get("/", rr.allRecipesHandler)
+	r.Get("/", rr.getAllRecipesHandler)
 	r.Get("/{recipeID}", rr.getRecipeHandler)
 	r.Get("/search", rr.searchRecipesHandler)
 
 	return r
 }
 
-func (rr recipesResource) allRecipesHandler(w http.ResponseWriter, r *http.Request) {
-	recipes, err := allRecipes(rr.db)
+func (rr recipesResource) getAllRecipesHandler(w http.ResponseWriter, r *http.Request) {
+	recipes, err := getAllRecipes(rr.db)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -114,12 +114,12 @@ func (rr recipesResource) searchRecipesHandler(w http.ResponseWriter, r *http.Re
 	w.Write(recipesJson)
 }
 
-func allRecipes(db *sql.DB) ([]recipeSummary, error) {
+func getAllRecipes(db *sql.DB) ([]recipeSummary, error) {
 	var recipes []recipeSummary
 
 	rows, err := db.Query("SELECT id, title, description, time, servings FROM recipes")
 	if err != nil {
-		return nil, fmt.Errorf("allRecipes: %v", err)
+		return nil, fmt.Errorf("getAllRecipes: %v", err)
 	}
 
 	defer rows.Close()
@@ -127,12 +127,12 @@ func allRecipes(db *sql.DB) ([]recipeSummary, error) {
 	for rows.Next() {
 		var recipe recipeSummary
 		if err := rows.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings); err != nil {
-			return nil, fmt.Errorf("allRecipes: %v", err)
+			return nil, fmt.Errorf("getAllRecipes: %v", err)
 		}
 		recipes = append(recipes, recipe)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("allRecipes: %v", err)
+		return nil, fmt.Errorf("getAllRecipes: %v", err)
 	}
 
 	return recipes, nil
