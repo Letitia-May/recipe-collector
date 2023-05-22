@@ -40,9 +40,7 @@ func (rr recipesResource) getAllRecipesHandler(w http.ResponseWriter, r *http.Re
 		log.Fatal(err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Write(recipesJson)
+	writeResponse(w, recipesJson)
 }
 
 func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Request) {
@@ -61,9 +59,7 @@ func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Reques
 		log.Fatal(err)
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Write(recipeJson)
+	writeResponse(w, recipeJson)
 }
 
 func (rr recipesResource) searchRecipesHandler(w http.ResponseWriter, r *http.Request) {
@@ -77,7 +73,11 @@ func (rr recipesResource) searchRecipesHandler(w http.ResponseWriter, r *http.Re
 		log.Fatal(err)
 	}
 
+	writeResponse(w, recipesJson)
+}
+
+func writeResponse(w http.ResponseWriter, data []byte) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Write(recipesJson)
+	w.Write(data)
 }
