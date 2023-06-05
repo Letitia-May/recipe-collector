@@ -4,7 +4,7 @@ A simple app to help me keep all the recipes I've cooked and loved in one place,
 
 ## Dependencies
 
--   Go version `go1.17.6` and above
+-   Go version `go1.19` and above
 
 ## Installing
 
