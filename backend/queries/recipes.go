@@ -68,7 +68,7 @@ func GetRecipe(db *sql.DB, id int64) (*recipe, error) {
 	row := db.QueryRow("SELECT * FROM recipes WHERE id = ?", id)
 	if err := row.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.TimesCooked); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("getRecipe %d: no such recipe", id)
+			return nil, nil
 		}
 		return nil, fmt.Errorf("getRecipe %d: %v", id, err)
 	}

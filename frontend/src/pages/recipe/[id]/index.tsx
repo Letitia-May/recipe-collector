@@ -82,6 +82,12 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({ 
         headers: { Accept: 'application/json' },
     });
 
+    if (response.status === 404) {
+        return {
+            notFound: true,
+        };
+    }
+
     if (!response.ok) {
         throw new Error('Network response was not OK');
     }

@@ -54,6 +54,11 @@ func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Reques
 		log.Fatal(err)
 	}
 
+	if recipe == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
 	recipeJson, err := json.Marshal(recipe)
 	if err != nil {
 		log.Fatal(err)
