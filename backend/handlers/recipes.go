@@ -46,7 +46,8 @@ func (rr recipesResource) getAllRecipesHandler(w http.ResponseWriter, r *http.Re
 func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Request) {
 	recipeID, err := strconv.ParseInt(chi.URLParam(r, "recipeID"), 10, 64)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		return
 	}
 
 	recipe, err := queries.GetRecipe(rr.db, recipeID)

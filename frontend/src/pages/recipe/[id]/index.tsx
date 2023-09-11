@@ -82,7 +82,9 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({ 
         headers: { Accept: 'application/json' },
     });
 
-    if (response.status === 404) {
+    // Return the 404 error page when recipe not found or url params can't be processed.
+    // Can show different error pages for these eventually.
+    if (response.status === 404 || response.status === 422) {
         return {
             notFound: true,
         };
