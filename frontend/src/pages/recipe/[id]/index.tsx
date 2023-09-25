@@ -83,8 +83,8 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({ 
     });
 
     // Return the 404 error page when recipe not found or url params can't be processed.
-    // Can show different error pages for these eventually.
-    if (response.status === 404 || response.status === 422) {
+    // Will show different error pages for these eventually.
+    if (response.status === 404 || !response.json || response.status === 422) {
         return {
             notFound: true,
         };
@@ -92,12 +92,6 @@ export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({ 
 
     if (!response.ok) {
         throw new Error('Network response was not OK');
-    }
-
-    if (!response.json) {
-        return {
-            notFound: true,
-        };
     }
 
     const recipe = await response.json();

@@ -2,8 +2,6 @@ package queries
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
 )
 
 type recipeSummary struct {
@@ -43,7 +41,7 @@ func GetAllRecipes(db *sql.DB) ([]recipeSummary, error) {
 
 	rows, err := db.Query("SELECT id, title, description, time, servings FROM recipes")
 	if err != nil {
-		return nil, fmt.Errorf("getAllRecipes: %v", err)
+		panic(err)
 	}
 
 	defer rows.Close()
@@ -51,12 +49,12 @@ func GetAllRecipes(db *sql.DB) ([]recipeSummary, error) {
 	for rows.Next() {
 		var recipe recipeSummary
 		if err := rows.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings); err != nil {
-			return nil, fmt.Errorf("getAllRecipes: %v", err)
+			panic(err)
 		}
 		recipes = append(recipes, recipe)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("getAllRecipes: %v", err)
+		panic(err)
 	}
 
 	return recipes, nil
@@ -70,18 +68,18 @@ func GetRecipe(db *sql.DB, id int64) (*recipe, error) {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("getRecipe %d: %v", id, err)
+		panic(err)
 	}
 
 	steps, err := getRecipeSteps(db, id)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	recipe.Steps = steps
 
 	ingredientSections, err := getIngredientSections(db, id)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	recipe.IngredientSections = ingredientSections
 

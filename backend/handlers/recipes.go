@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 type recipesResource struct {
@@ -22,6 +23,8 @@ func NewRecipesResource(db *sql.DB) recipesResource {
 func (rr recipesResource) Routes() chi.Router {
 	r := chi.NewRouter()
 
+	r.Use(middleware.Recoverer)
+
 	r.Get("/", rr.getAllRecipesHandler)
 	r.Get("/{recipeID}", rr.getRecipeHandler)
 	r.Get("/search", rr.searchRecipesHandler)
@@ -32,12 +35,16 @@ func (rr recipesResource) Routes() chi.Router {
 func (rr recipesResource) getAllRecipesHandler(w http.ResponseWriter, r *http.Request) {
 	recipes, err := queries.GetAllRecipes(rr.db)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
 	}
 
 	recipesJson, err := json.Marshal(recipes)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
 	}
 
 	writeResponse(w, recipesJson)
@@ -47,22 +54,28 @@ func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Reques
 	recipeID, err := strconv.ParseInt(chi.URLParam(r, "recipeID"), 10, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
+		log.Println(err)
 		return
 	}
 
 	recipe, err := queries.GetRecipe(rr.db, recipeID)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
 	}
 
 	if recipe == nil {
 		w.WriteHeader(http.StatusNotFound)
+		log.Println(err)
 		return
 	}
 
 	recipeJson, err := json.Marshal(recipe)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
 	}
 
 	writeResponse(w, recipeJson)
@@ -71,12 +84,16 @@ func (rr recipesResource) getRecipeHandler(w http.ResponseWriter, r *http.Reques
 func (rr recipesResource) searchRecipesHandler(w http.ResponseWriter, r *http.Request) {
 	recipes, err := queries.SearchRecipes(rr.db, r.URL.Query().Get("query"))
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
 	}
 
 	recipesJson, err := json.Marshal(recipes)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
 	}
 
 	writeResponse(w, recipesJson)
