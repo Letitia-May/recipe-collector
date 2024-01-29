@@ -9,7 +9,7 @@ export default function Home({ recipes }: InferGetServerSidePropsType<typeof get
     const [filteredRecipes, setFilteredRecipes] = useState<RecipeSummaryType[] | null>(recipes);
 
     const searchRecipes = async () => {
-        fetch(`//localhost:8080/recipes/search?query=${searchTerm}`, {
+        fetch(`//127.0.0.1:8080/recipes/search?query=${searchTerm}`, {
             method: 'GET',
             headers: { Accept: 'application/json' },
         })
@@ -69,7 +69,7 @@ interface ServerSideProps {
 }
 
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async () => {
-    const response = await fetch(`http://localhost:8080/recipes`, {
+    const response = await fetch(`http://127.0.0.1:8080/recipes`, {
         method: 'GET',
         headers: { Accept: 'application/json' },
     });

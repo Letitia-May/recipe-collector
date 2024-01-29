@@ -77,7 +77,7 @@ interface ServerSideProps {
 export const getServerSideProps: GetServerSideProps<ServerSideProps> = async ({ query }) => {
     const { id } = query;
 
-    const response = await fetch(`http://localhost:8080/recipes/${id}`, {
+    const response = await fetch(`http://127.0.0.1:8080/recipes/${id}`, {
         method: 'GET',
         headers: { Accept: 'application/json' },
     });
