@@ -60,5 +60,4 @@ Next.js will start a hot-reloading development environment at `http://localhost:
 
 -   Typescript
 -   React
--   Next.js (framework for building websites)
--   Styled-components
+-   Next.js
