@@ -7,7 +7,7 @@ import (
 func getIngredients(db *sql.DB, id int64) ([]string, error) {
 	var ingredients []string
 
-	rows, err := db.Query("SELECT description FROM ingredients WHERE ingredient_header_id = ?", id)
+	rows, err := db.Query("SELECT description FROM ingredients WHERE ingredient_section_id = ?", id)
 	if err != nil {
 		panic(err)
 	}
