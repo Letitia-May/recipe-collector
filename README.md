@@ -43,10 +43,10 @@ The application includes a CLI with the following commands:
 
 #### Database Migrations
 
-Before starting the server, run the database migrations to set up the required tables:
+Before starting the server, run the database migrations from the `backend` directory to set up the required tables:
 
 ```
-go run main.go migrate
+go run . migrate
 ```
 
 For more detailed information about migrations, see the [migrations README](backend/migrations/README.md).
@@ -56,7 +56,7 @@ For more detailed information about migrations, see the [migrations README](back
 From the `backend` directory start the web server:
 
 ```
-go run main.go serve
+go run . serve
 ```
 
 Visit `http://localhost:8080/recipes` to see the list of all recipes as a json response.
