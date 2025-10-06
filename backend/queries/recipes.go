@@ -63,7 +63,7 @@ func GetAllRecipes(db *sql.DB) ([]recipeSummary, error) {
 func GetRecipe(db *sql.DB, id int64) (*recipe, error) {
 	var recipe recipe
 
-	row := db.QueryRow("SELECT * FROM recipes WHERE id = ?", id)
+	row := db.QueryRow("SELECT id, title, description, time, servings, url, notes, times_cooked FROM recipes WHERE id = ?", id)
 	if err := row.Scan(&recipe.ID, &recipe.Title, &recipe.Description, &recipe.Time, &recipe.Servings, &recipe.Url, &recipe.Notes, &recipe.TimesCooked); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
