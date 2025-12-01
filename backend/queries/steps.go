@@ -27,3 +27,13 @@ func getRecipeSteps(db *sql.DB, id int64) ([]step, error) {
 
 	return steps, nil
 }
+
+func createStep(db *sql.DB, recipeID int64, step *step) error {
+	_, err := db.Exec(
+		"INSERT INTO steps (recipe_id, number, description) VALUES (?, ?, ?)",
+		recipeID,
+		step.Number,
+		step.Description,
+	)
+	return err
+}

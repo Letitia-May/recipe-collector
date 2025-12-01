@@ -85,3 +85,74 @@ func GetRecipe(db *sql.DB, id int64) (*recipe, error) {
 
 	return &recipe, nil
 }
+
+type RecipeInput struct {
+	Title              string                     `json:"title"`
+	Description        *string                    `json:"description,omitempty"`
+	Time               *string                    `json:"time,omitempty"`
+	Servings           *string                    `json:"servings,omitempty"`
+	Url                *string                    `json:"url,omitempty"`
+	Notes              *string                    `json:"notes,omitempty"`
+	TimesCooked        *int64                     `json:"timesCooked,omitempty"`
+	Steps              []StepInput                `json:"steps"`
+	IngredientSections []IngredientSectionInput   `json:"ingredientSections"`
+}
+
+type StepInput struct {
+	Number      int64  `json:"number"`
+	Description string `json:"description"`
+}
+
+type IngredientSectionInput struct {
+	Heading     string   `json:"heading"`
+	Ingredients []string `json:"ingredients"`
+}
+
+func CreateRecipe(db *sql.DB, input *RecipeInput) (int64, error) {
+	result, err := db.Exec(
+		"INSERT INTO recipes (title, description, time, servings, url, notes, times_cooked) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		input.Title,
+		input.Description,
+		input.Time,
+		input.Servings,
+		input.Url,
+		input.Notes,
+		input.TimesCooked,
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	recipeID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	for _, section := range input.IngredientSections {
+		heading := section.Heading
+		if heading == "" {
+			heading = "Ingredients"
+		}
+		sectionData := ingredientSection{
+			Heading:     heading,
+			Ingredients: section.Ingredients,
+		}
+		err := createIngredientSection(db, recipeID, &sectionData)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	for _, stepInput := range input.Steps {
+		stepData := step{
+			Number:      stepInput.Number,
+			Description: stepInput.Description,
+		}
+		err := createStep(db, recipeID, &stepData)
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return recipeID, nil
+}

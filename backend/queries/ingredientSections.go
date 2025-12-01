@@ -35,3 +35,28 @@ func getIngredientSections(db *sql.DB, id int64) ([]ingredientSection, error) {
 
 	return ingredientSections, nil
 }
+
+func createIngredientSection(db *sql.DB, recipeID int64, section *ingredientSection) error {
+	result, err := db.Exec(
+		"INSERT INTO ingredient_sections (recipe_id, name) VALUES (?, ?)",
+		recipeID,
+		section.Heading,
+	)
+	if err != nil {
+		return err
+	}
+
+	sectionID, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	for _, ingredient := range section.Ingredients {
+		err := createIngredient(db, sectionID, ingredient)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

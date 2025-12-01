@@ -26,8 +26,9 @@ func (rr recipesResource) Routes() chi.Router {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/", rr.getAllRecipesHandler)
-	r.Get("/{recipeID}", rr.getRecipeHandler)
+	r.Post("/", rr.createRecipeHandler)
 	r.Get("/search", rr.searchRecipesHandler)
+	r.Get("/{recipeID}", rr.getRecipeHandler)
 
 	return r
 }
@@ -97,6 +98,44 @@ func (rr recipesResource) searchRecipesHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	writeResponse(w, recipesJson)
+}
+
+func (rr recipesResource) createRecipeHandler(w http.ResponseWriter, r *http.Request) {
+	var recipeData queries.RecipeInput
+
+	if err := json.NewDecoder(r.Body).Decode(&recipeData); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		log.Println("Error decoding recipe:", err)
+		return
+	}
+
+	if recipeData.Title == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(`{"error": "title is required"}`))
+		return
+	}
+
+	recipeID, err := queries.CreateRecipe(rr.db, &recipeData)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("Error creating recipe:", err)
+		return
+	}
+
+	response := map[string]interface{}{
+		"id":      recipeID,
+		"message": "Recipe created successfully",
+	}
+
+	responseJson, err := json.Marshal(response)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	writeResponse(w, responseJson)
 }
 
 func writeResponse(w http.ResponseWriter, data []byte) {

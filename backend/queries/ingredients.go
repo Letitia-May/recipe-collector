@@ -27,3 +27,12 @@ func getIngredients(db *sql.DB, id int64) ([]string, error) {
 
 	return ingredients, nil
 }
+
+func createIngredient(db *sql.DB, sectionID int64, description string) error {
+	_, err := db.Exec(
+		"INSERT INTO ingredients (ingredient_section_id, description) VALUES (?, ?)",
+		sectionID,
+		description,
+	)
+	return err
+}
